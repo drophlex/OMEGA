@@ -1,0 +1,90 @@
+name: Build OMEGA
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            name: macOS
+          - os: windows-latest
+            name: Windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        shell: bash
+        run: |
+          if [ "${{ matrix.name }}" = "macOS" ]; then
+            cmake -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_BUILD_TYPE=Release
+          else
+            cmake -B build -DCMAKE_BUILD_TYPE=Release
+          fi
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 4
+
+      - name: Package (macOS)
+        if: matrix.name == 'macOS'
+        run: |
+          mkdir -p dist/OMEGA-macOS
+          cp -R build/Omega_artefacts/Release/VST3/Omega.vst3 dist/OMEGA-macOS/
+          cp -R build/Omega_artefacts/Release/AU/Omega.component dist/OMEGA-macOS/
+          codesign --force --deep -s - dist/OMEGA-macOS/Omega.vst3
+          codesign --force --deep -s - dist/OMEGA-macOS/Omega.component
+          cp installer/install-mac.command dist/OMEGA-macOS/
+          chmod +x dist/OMEGA-macOS/install-mac.command
+          cp manual/*.pdf dist/OMEGA-macOS/
+          cd dist && ditto -c -k --keepParent OMEGA-macOS OMEGA-macOS.zip
+
+      - name: Package (Windows)
+        if: matrix.name == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/OMEGA-Windows | Out-Null
+          Copy-Item -Recurse build/Omega_artefacts/Release/VST3/Omega.vst3 dist/OMEGA-Windows/
+          Copy-Item installer/install-windows.bat dist/OMEGA-Windows/
+          Copy-Item manual/*.pdf dist/OMEGA-Windows/
+          Compress-Archive -Path dist/OMEGA-Windows -DestinationPath dist/OMEGA-Windows.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OMEGA-${{ matrix.name }}
+          path: dist/*.zip
+
+      - name: Read version
+        id: ver
+        shell: bash
+        run: echo "v=$(cat VERSION | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Release
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.v }}
+          name: OMEGA ${{ steps.ver.outputs.v }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          files: dist/*.zip
+          overwrite_files: true
+          body: |
+            ✦ **OMEGA ${{ steps.ver.outputs.v }}** — the last plug-in on your master. 15-day full trial, then a US$49 licence (OMEGA + CONSTELLATION bundle US$69).
+
+            **macOS** (Apple Silicon + Intel): download `OMEGA-macOS.zip`, unzip, right-click `install-mac.command` → Open.
+            **Windows 10/11**: download `OMEGA-Windows.zip`, unzip, double-click `install-windows.bat` → Yes.
+            Then Ableton → Settings → Plug-Ins → *Use VST3 Plug-in System Folders* → Rescan. Manuals (EN / ES / EN+ES) are inside each zip.
+
+            **macOS** (Apple Silicon + Intel): descarga `OMEGA-macOS.zip`, descomprime, clic derecho en `install-mac.command` → Abrir.
+            **Windows 10/11**: descarga `OMEGA-Windows.zip`, descomprime, doble clic en `install-windows.bat` → Sí.
+            Luego Ableton → Configuración → Plug-Ins → *Usar carpetas de sistema VST3* → Re-escanear. Los manuales (EN / ES / EN+ES) vienen dentro de cada zip.

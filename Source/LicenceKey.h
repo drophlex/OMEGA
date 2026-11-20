@@ -1,0 +1,3 @@
+// Public half of the Polaris Sound Lab licence key (verification only).
+#pragma once
+#define PSL_LICENCE_N "98cca4b5ec01c00f781969e1d5d158a851604ba98d5c8634987704851b77e029e2dce0716ffaf2b60c49faba153ee562e0d90e794826dbe87c45793a9cd84d7d00f632722e3dea3b926a2163ff7c3c4d659d973d7064c3b651413812d15253b30ee04bc36257b6aef79c8305a1ca124070507c9418cdd357c34bdaf41404d883"
