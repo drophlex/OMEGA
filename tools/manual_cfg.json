@@ -1,0 +1,19 @@
+{
+ "product": "OMEGA",
+ "file": "Omega",
+ "key": "#ff4f12",
+ "key2": "#00a9e0",
+ "kana": "オメガ",
+ "code": "PSL-OMG",
+ "version": "1.1",
+ "cover_size": "150pt",
+ "cover_img": "omega_main.png",
+ "fig0": "MASTER VIEW",
+ "tagline_en": "Mix-bus & mastering processor",
+ "tagline_es": "Procesador de mix bus y mastering",
+ "spec1": "BS.1770-4 / EBU R128<br>TRUE PEAK 4× FIR<br>LR4 3-BAND GLUE<br>OVERSAMPLING 8×<br>STEREO → 7.1.4",
+ "spec2_en": "15-DAY FULL TRIAL<br>US$49 // BUNDLE US$69<br>OFFLINE LICENCE",
+ "spec2_es": "PRUEBA COMPLETA 15 DÍAS<br>US$49 // PAQUETE US$69<br>LICENCIA SIN INTERNET",
+ "claim_en": "THE LAST PLUG-IN ON YOUR MASTER",
+ "claim_es": "EL ÚLTIMO PLUG-IN DE TU MASTER"
+}

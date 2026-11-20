@@ -132,10 +132,10 @@ int main()
         std::printf ("        trial days left %d\n", L.daysLeft.load());
         check (! L.expired() && L.daysLeft.load() == 15, "15-day trial on first run");
         {
-            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor()); ed->setSize (1220, 780);
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor()); ed->setSize (1240, 800);
             dynamic_cast<OmegaEditor*> (ed.get())->showLicence();
             for (int k = 0; k < 20; ++k) { mix.fill (b, 0.25f); p.processBlock (b, midi); pump (34); }
-            juce::Image img (juce::Image::ARGB, 1220, 780, true); { juce::Graphics g (img); ed->paintEntireComponent (g, true); }
+            juce::Image img (juce::Image::ARGB, 1240, 800, true); { juce::Graphics g (img); ed->paintEntireComponent (g, true); }
             juce::File f ("/home/claude/omega/build/omega_licence.png"); f.deleteFile(); juce::FileOutputStream os (f); juce::PNGImageFormat().writeImageToStream (img, os);
         }
         check (! OmegaProcessor::activate ("someone@example.com", "ABCDEF12"), "bad key rejected");
@@ -147,11 +147,11 @@ int main()
     // 7. screenshots
     auto shot = [&] (const char* file, std::function<void (OmegaEditor&)> prep)
     {
-        std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor()); ed->setSize (1220, 780);
+        std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor()); ed->setSize (1240, 800);
         auto* oe = dynamic_cast<OmegaEditor*> (ed.get());
         if (prep) prep (*oe);
         for (int k = 0; k < 40; ++k) { mix.fill (b, 0.25f); p.processBlock (b, midi); pump (34); }
-        juce::Image img (juce::Image::ARGB, 1220, 780, true);
+        juce::Image img (juce::Image::ARGB, 1240, 800, true);
         { juce::Graphics g (img); ed->paintEntireComponent (g, true); }
         juce::File f (juce::String ("/home/claude/omega/build/") + file); f.deleteFile();
         juce::FileOutputStream os (f); juce::PNGImageFormat().writeImageToStream (img, os);

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(OMEGA VERSION 1.0.0)
+project(OMEGA VERSION 1.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,12 +31,16 @@ juce_add_plugin(Omega
   AU_MAIN_TYPE kAudioUnitType_Effect
   DESCRIPTION "Mix-bus and mastering processor with honest metering")
 
+juce_add_binary_data(OmegaFonts SOURCES
+  Resources/fonts/Archivo-CondensedBlack.ttf Resources/fonts/Archivo-SemiCondBold.ttf Resources/fonts/Archivo-Regular.ttf
+  Resources/fonts/NotoJP-Bold-sub.ttf Resources/fonts/SpaceMono-Regular.ttf Resources/fonts/SpaceMono-Bold.ttf)
+set_target_properties(OmegaFonts PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_sources(Omega PRIVATE Source/PluginProcessor.cpp Source/PluginEditor.cpp)
 target_include_directories(Omega PRIVATE Source)
 target_compile_definitions(Omega PUBLIC JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_VST3_CAN_REPLACE_VST2=0 JUCE_DISPLAY_SPLASH_SCREEN=0)
 target_compile_options(Omega PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 target_link_libraries(Omega
-  PRIVATE juce::juce_audio_utils juce::juce_dsp juce::juce_cryptography
+  PRIVATE OmegaFonts juce::juce_audio_utils juce::juce_dsp juce::juce_cryptography
   PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_lto_flags juce::juce_recommended_warning_flags)
 
 option(OM_BUILD_TESTS "Build offline test" OFF)
@@ -45,5 +49,5 @@ if(OM_BUILD_TESTS)
   target_sources(OmegaTest PRIVATE Tests/OmegaTest.cpp Source/PluginProcessor.cpp Source/PluginEditor.cpp)
   target_include_directories(OmegaTest PRIVATE Source)
   target_compile_definitions(OmegaTest PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_MODAL_LOOPS_PERMITTED=1)
-  target_link_libraries(OmegaTest PRIVATE juce::juce_audio_utils juce::juce_dsp juce::juce_cryptography juce::juce_recommended_config_flags)
+  target_link_libraries(OmegaTest PRIVATE OmegaFonts juce::juce_audio_utils juce::juce_dsp juce::juce_cryptography juce::juce_recommended_config_flags)
 endif()

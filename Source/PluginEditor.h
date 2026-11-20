@@ -3,34 +3,11 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "PluginProcessor.h"
 #include "Lang.h"
+#include "Design.h"
 
 namespace om
 {
-struct Pal
-{
-    static juce::Colour bg()    { return juce::Colour (0xff04030c); }
-    static juce::Colour panel() { return juce::Colour (0xff0b0920); }
-    static juce::Colour line()  { return juce::Colour (0xff221d4d); }
-    static juce::Colour text()  { return juce::Colour (0xffeeeaff); }
-    static juce::Colour dim()   { return juce::Colour (0xff8a84b8); }
-    static juce::Colour gold()  { return juce::Colour (0xffffd166); }
-    static juce::Colour cyan()  { return juce::Colour (0xff58e1ff); }
-    static juce::Colour pink()  { return juce::Colour (0xffff4fd8); }
-    static juce::Colour red()   { return juce::Colour (0xffff5a4e); }
-    static juce::Colour green() { return juce::Colour (0xff7affc1); }
-};
 
-class LnF : public juce::LookAndFeel_V4
-{
-public:
-    LnF();
-    void drawRotarySlider (juce::Graphics&, int, int, int, int, float, float, float, juce::Slider&) override;
-    void drawButtonBackground (juce::Graphics&, juce::Button&, const juce::Colour&, bool, bool) override;
-    void drawComboBox (juce::Graphics&, int, int, bool, int, int, int, int, juce::ComboBox&) override;
-    juce::Font getComboBoxFont (juce::ComboBox&) override;
-    juce::Font getTextButtonFont (juce::TextButton&, int) override;
-    juce::Font getLabelFont (juce::Label&) override;
-};
 
 class Galaxy : public juce::Component
 {
@@ -108,7 +85,7 @@ private:
     using CA = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
 
     OmegaProcessor& proc;
-    om::LnF lnf;
+    psl::FlatLnF lnf { psl::C::orange };
     om::Galaxy galaxy;
     om::Meter inMeter, outMeter;
     om::Compass compass;
