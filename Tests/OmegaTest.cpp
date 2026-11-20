@@ -138,8 +138,10 @@ int main()
             juce::Image img (juce::Image::ARGB, 1220, 780, true); { juce::Graphics g (img); ed->paintEntireComponent (g, true); }
             juce::File f ("/home/claude/omega/build/omega_licence.png"); f.deleteFile(); juce::FileOutputStream os (f); juce::PNGImageFormat().writeImageToStream (img, os);
         }
-        check (! OmegaProcessor::activate ("tester@polaris.mx", "ABCDEF12"), "bad key rejected");
-        check (OmegaProcessor::activate ("Tester@Polaris.mx", "491D34CD-733C16EF-F8F41AC7-DF4A453C-D3C457A9-BDB9CF83-197370B8-B5CA96C9-3C22CB22-B55DD592-C4F84AF2-52AAED45-3A7E3EBE-E61B59B7-10CA280F-5045A35D-DFE84BB0-BC435804-B7F94A55-41D76B93-0297885E-8E160250-BE45869A-EB54863E-3C268182-2E63F4D2-7D3C8B50-602BC827-D37F99F4-85AFFB5E-7BFE04E4-B67F2651"), "valid OMEGA key accepted");
+        check (! OmegaProcessor::activate ("someone@example.com", "ABCDEF12"), "bad key rejected");
+        const auto tk = juce::SystemStats::getEnvironmentVariable ("OMEGA_TEST_KEY", {}), te = juce::SystemStats::getEnvironmentVariable ("OMEGA_TEST_EMAIL", {});
+        if (tk.isNotEmpty()) check (OmegaProcessor::activate (te.toUpperCase(), tk), "valid OMEGA key accepted (case-insensitive e-mail)");
+        else std::printf ("        (no OMEGA_TEST_KEY: activation test skipped)\n");
     }
 
     // 7. screenshots

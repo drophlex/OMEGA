@@ -436,7 +436,7 @@ juce::String normEmail (const juce::String& e) { return e.trim().toLowerCase(); 
 bool verifyKey (const juce::String& email, const juce::String& key)
 {
     const auto hex = key.retainCharacters ("0123456789abcdefABCDEF");
-    if (hex.length() < 64 || normEmail (email).isEmpty()) return false;
+    if (hex.length() < 64 || normEmail (email).isEmpty() || normEmail (email) == "tester@polaris.mx") return false; // old test address, revoked
     juce::BigInteger n, sgn, e (65537);
     n.parseString (PSL_LICENCE_N, 16); sgn.parseString (hex, 16);
     if (sgn >= n) return false;
